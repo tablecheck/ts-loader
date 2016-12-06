@@ -2,17 +2,15 @@
   "name": "ts-loader",
   "version": "1.2.0",
   "private": true,
+  "main": "lib/index.js",
   "repository": "https://github.com/kkvesper/ts-loader",
   "dependencies": {
-    "json-loader": "^0.5.4",
     "lz-string": "^1.4.4",
+    "q": "1.4.1",
     "q-io": "^1.13.2",
     "semver": "^5.2.0",
     "spark-md5": "^2.0.2",
     "throat": "^2.0.2",
     "webpack": "^1.12.14"
-  },
-  "manifestFile": "app-manifest.json",
-  "supportedAppVersion": ">=3.17.0",
-  "supportedManifestVersion": "^2.0.0"
+  }
 }
