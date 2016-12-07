@@ -4,13 +4,22 @@
   "private": true,
   "main": "lib/index.js",
   "repository": "https://github.com/kkvesper/ts-loader",
+  "scripts": {
+    "build": "webpack -p --config webpack-production.config.js",
+    "lint": "eslint lib --ext .js",
+    "start": "webpack-dev-server --inline --progress --colors --host 0.0.0.0"
+  },
   "dependencies": {
     "lz-string": "^1.4.4",
     "q": "1.4.1",
-    "q-io": "^1.13.2",
     "semver": "^5.2.0",
     "spark-md5": "^2.0.2",
-    "throat": "^2.0.2",
+    "throat": "^2.0.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^7.0.0",
+    "eslint": "^3.7.1",
+    "eslint-plugin-react": "^6.4.1",
     "webpack": "^1.12.14"
   }
 }
