@@ -1,6 +1,6 @@
 ts-loader
 =========
 
-`node build.js` - Build ts-loader.js and ts-loader.min.js
+`npm run build` - Build ts-loader.js and ts-loader.min.js
 
-`node watch.js` - For development
+`npm run start` - For development
