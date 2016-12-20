@@ -33,16 +33,18 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 
-/******/ 	// identity function for calling harmory imports with the correct context
+/******/ 	// identity function for calling harmony imports with the correct context
 /******/ 	__webpack_require__.i = function(value) { return value; };
 
-/******/ 	// define getter function for harmory exports
+/******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		Object.defineProperty(exports, name, {
-/******/ 			configurable: false,
-/******/ 			enumerable: true,
-/******/ 			get: getter
-/******/ 		});
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
 /******/ 	};
 
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -61,197 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ },
-/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, setImmediate) {// vim:ts=4:sts=4:sw=4:
@@ -2303,130 +2119,328 @@ return Q;
 
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(15).setImmediate))
+
+/***/ },
+/* 1 */
+/***/ function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(0).nextTick;
-var apply = Function.prototype.apply;
-var slice = Array.prototype.slice;
-var immediateIds = {};
-var nextImmediateId = 0;
+var icon, iconContainer, loaderBox, logo, overlap, splash, text; // dom elements
+var timeout;
 
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) { timeout.close(); };
-
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
-}
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(window, this._id);
-};
-
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = msecs;
-};
-
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
-  item._idleTimeout = -1;
-};
-
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
-
-  var msecs = item._idleTimeout;
-  if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
+function checkOrientation() {
+  if (window.orientation == 0 || window.orientation == 180) { // portrait
+    icon.classList.add('portrait');
+  } else { //landscape
+    icon.classList.remove('portrait');
   }
+}
+
+window.addEventListener('orientationchange', checkOrientation);
+
+function show() {
+  window.clearTimeout(timeout);
+  splash.style.display = '';
+  splash.style.transition = '';
+  splash.style.webkitTransition = '';
+  splash.style.opacity = 1;
+}
+
+function hide() {
+  hideLoader();
+
+  window.clearTimeout(timeout);
+  timeout = window.setTimeout(function () {
+    splash.style.transition = 'opacity 300ms linear';
+    splash.style.webkitTransition = 'opacity 300ms linear';
+    splash.style.opacity = 0;
+
+    timeout = window.setTimeout(function () {
+      splash.style.display = 'none';
+    }, 300);
+  }, 300);
+}
+
+function setProgress(value) {
+  loaderBox.textContent = value;
+}
+
+function setProgressScale(scale) {
+  loaderBox.style.webkitTransform = 'scale(' + scale + ')';
+  loaderBox.style.transform = 'scale(' + scale + ')';
+}
+
+function showLoader() {
+  setProgressScale(1);
+}
+
+function hideLoader() {
+  setProgressScale(0);
+}
+
+function setStatusBarHeight(height) {
+  splash.style.marginTop =  -height + 'px';
+}
+
+function create() {
+  splash = document.createElement('div');
+  splash.id = 'ts-splash-screen';
+
+  logo = document.createElement('div');
+  logo.id = 'ts-splash-logo';
+  splash.appendChild(logo);
+
+  iconContainer = document.createElement('div');
+  iconContainer.id = 'ts-splash-icon-container';
+  logo.appendChild(iconContainer);
+
+  overlap = document.createElement('div');
+  overlap.id = 'ts-splash-overlap';
+  iconContainer.appendChild(overlap);
+
+  icon = document.createElement('div');
+  icon.id = 'ts-splash-icon';
+  iconContainer.appendChild(icon);
+
+  loaderBox = document.createElement('div');
+  loaderBox.id = 'ts-splash-loader';
+  iconContainer.appendChild(loaderBox);
+
+  text = document.createElement('div');
+  text.id = 'ts-splash-logo-text';
+  logo.appendChild(text);
+
+  document.body.appendChild(splash);
+
+  checkOrientation();
+}
+
+module.exports = {
+  create: create,
+  show: show,
+  hide: hide,
+  setProgress: setProgress,
+  showLoader: showLoader,
+  hideLoader: hideLoader,
+  setStatusBarHeight: setStatusBarHeight
 };
 
-// That's not how node.js implements it but the exposed api is the same.
-exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-  var id = nextImmediateId++;
-  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-  immediateIds[id] = true;
-
-  nextTick(function onNextTick() {
-    if (immediateIds[id]) {
-      // fn.call() is faster so we optimize for the common use-case
-      // @see http://jsperf.com/call-apply-segu
-      if (args) {
-        fn.apply(null, args);
-      } else {
-        fn.call(null);
-      }
-      // Prevent ids from leaking
-      exports.clearImmediate(id);
-    }
-  });
-
-  return id;
-};
-
-exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-  delete immediateIds[id];
-};
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2).setImmediate, __webpack_require__(2).clearImmediate))
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() { return this; })();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ },
-/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-var EventEmitter = __webpack_require__(11).EventEmitter;
-var all = __webpack_require__(1).all;
-var assert = __webpack_require__(10);
-var Promise = __webpack_require__(1).Promise;
-var semver = __webpack_require__(13);
-var throat = __webpack_require__(15)(Promise);
-var SparkMD5 = __webpack_require__(14);
+var EventEmitter = __webpack_require__(9).EventEmitter;
+var all = __webpack_require__(0).all;
+var Promise = __webpack_require__(0).Promise;
+var semver = __webpack_require__(11);
+var throat = __webpack_require__(14)(Promise);
+var SparkMD5 = __webpack_require__(13);
 
-var fs = __webpack_require__(7);
-var objectAssign = __webpack_require__(8);
-var xhrPromise = __webpack_require__(9);
+var CordovaPromiseFS = __webpack_require__(5);
+var LocalStoragePromiseFS = __webpack_require__(6);
+var objectAssign = __webpack_require__(7);
+var xhrPromise = __webpack_require__(8);
+
+var isCordova = typeof window !== 'undefined' && typeof window.cordova !== 'undefined';
+
+var fs = CordovaPromiseFS({
+  persistent: true,
+  concurrency: 3,
+  Promise: Promise
+});
+
+if (!isCordova) {
+  fs = LocalStoragePromiseFS;
+}
+
+const NOT_FOUND_ERR = 1;
 
 var loaderConfig = {
   manifestFile: 'app-manifest.json',
@@ -2437,6 +2451,7 @@ var totalBytes, loadedBytes;
 
 function getLocalHashes() {
   var content = window.localStorage.getItem('localHashes');
+
   if (!content) {
     return {};
   }
@@ -2459,9 +2474,22 @@ function updateLocalHash(file) {
   window.localStorage.setItem('localHashes', stringified);
 }
 
-function getAppHost() {
-  return new Promise(function (resolve) {
-    return resolve(window.plugins && window.plugins.appPreferences.fetch('appServer'));
+function moreConfig() {
+  function cordovaAppHost() {
+    return new Promise(function (resolve) {
+      return resolve(window.plugins && window.plugins.appPreferences.fetch('appHost'));
+    });
+  }
+
+  function publicPath() {
+    return fs.dir().then(function (directoryEntry) { return directoryEntry.nativeURL; });
+  }
+
+  return all([ cordovaAppHost(), publicPath() ]).then(function (moreConfig) {
+    return {
+      appHost: moreConfig[0],
+      publicPath: moreConfig[1]
+    };
   });
 }
 
@@ -2475,7 +2503,7 @@ function getAppManifest(config) {
     manifestEntry.hash = localHashes[path];
     file.content = content;
   }).catch(function (error) {
-    if (error && error.code !== 'ENOENT') {
+    if (error && (error.code !== NOT_FOUND_ERR)) {
       throw error;
     }
   }).then(function () {
@@ -2503,7 +2531,6 @@ function getAppManifest(config) {
     file.blob = new Blob([file.fileBuffer], { type: file.contentType });
 
     return writeFile(file, config).then(function () {
-
       return new Promise(function (resolve, reject) {
         var blob = file.blob;
         var fileReader= new FileReader();
@@ -2534,8 +2561,8 @@ function getAppManifest(config) {
 
 function getFilesToLoad(manifest, config) {
   return new Promise(function (resolve) {
-    var filesToLoad = manifest.domNodes.map(function (nodeInfo) {
-      return manifest.files[nodeInfo.path];
+    var filesToLoad = Object.keys(manifest.files).map(function (key) {
+      return manifest.files[key];
     }).filter(function (file) {
       return file && (!config.useLocalCache || file.hash != localHashes[file.path]);
     });
@@ -2651,6 +2678,10 @@ function createLocalScriptNode(fileCache, nodeInfo, config) {
     var node = document.createElement('script');
     node.setAttribute('type', 'text/javascript');
 
+    if (config.publicPath) {
+      node.setAttribute('data-public-path', config.publicPath);
+    }
+
     updateNodeAttributes(node, nodeInfo);
 
     document.body.appendChild(node);
@@ -2683,6 +2714,7 @@ function createLocalScriptNode(fileCache, nodeInfo, config) {
 
       node.text = text;
       node.id = nodeInfo.path;
+
       resolve(node);
     };
 
@@ -2825,6 +2857,10 @@ function createNode(fileCache, nodeInfo, config) {
     return createRemoteStyleSheetNode(nodeInfo);
   }
 
+  if (type === 'map') {
+    return;
+  }
+
   throw new Error('Unknown node type: ' + type);
 }
 
@@ -2841,11 +2877,13 @@ function loadFilesFromCache(manifest, fileCache, files) {
     }
   });
 
-  return filesToLoad.map(function (file) {
-    fs.read(file.path).then(function (content) {
+  return all(filesToLoad.map(function (file) {
+    return fs.read(file.path).then(function (content) {
       fileCache[file.path] = { manifestEntry: file, content: content };
+    }).catch(function (error) {
+      console.error(error);
     });
-  });
+  }));
 }
 
 var loader = new EventEmitter();
@@ -2859,10 +2897,13 @@ loader.load = function (runtimeConfig) {
   var manifest = this.manifest = {};
   var fileCache = this.fileCache = {};
 
-  getAppHost().then(function (appHost) {
-    config.appHost = config.appHost || appHost || '';
-  }, function (error) {
-    console.warn('Error reading appHost from appPreferences, using default', error);
+  moreConfig().then(function (moreConfig) {
+    config.appHost = moreConfig.appHost || config.appHost || '';
+    config.publicPath = moreConfig.publicPath || config.publicPath || '';
+
+    if (!config.publicPath && config.appHost) {
+      config.publicPath = config.appHost + '/';
+    }
   }).then(function () {
     return getAppManifest(config);
   }).then(function (appManifest) {
@@ -2870,8 +2911,8 @@ loader.load = function (runtimeConfig) {
     manifest = appManifest.content;
 
     // Let's validate our app-manifest to make sure it has everything we need.
-    assert.equal(typeof manifest.files, 'object');
-    assert(Array.isArray(manifest.domNodes), 'Expected domNodes to be an array');
+    if (typeof manifest.files !== 'object') { throw new Error('Expected appManifest.files to be an object'); }
+    if (!Array.isArray(manifest.domNodes)) { throw new Error('Expected appManifest.domNodes to be an array'); }
 
     return getFilesToLoad(manifest, config);
   }).then(function (files) {
@@ -2901,116 +2942,11 @@ module.exports = loader;
 
 
 /***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-var icon, iconContainer, loaderBox, logo, overlap, splash, text; // dom elements
-var timeout;
-
-function checkOrientation() {
-  if (window.orientation == 0 || window.orientation == 180) { // portrait
-    icon.classList.add('portrait');
-  } else { //landscape
-    icon.classList.remove('portrait');
-  }
-}
-
-window.addEventListener('orientationchange', checkOrientation);
-
-function show() {
-  window.clearTimeout(timeout);
-  splash.style.display = '';
-  splash.style.transition = '';
-  splash.style.webkitTransition = '';
-  splash.style.opacity = 1;
-}
-
-function hide() {
-  hideLoader();
-
-  window.clearTimeout(timeout);
-  timeout = window.setTimeout(function () {
-    splash.style.transition = 'opacity 300ms linear';
-    splash.style.webkitTransition = 'opacity 300ms linear';
-    splash.style.opacity = 0;
-
-    timeout = window.setTimeout(function () {
-      splash.style.display = 'none';
-    }, 300);
-  }, 300);
-}
-
-function setProgress(value) {
-  loaderBox.textContent = value;
-}
-
-function setProgressScale(scale) {
-  loaderBox.style.webkitTransform = 'scale(' + scale + ')';
-  loaderBox.style.transform = 'scale(' + scale + ')';
-}
-
-function showLoader() {
-  setProgressScale(1);
-}
-
-function hideLoader() {
-  setProgressScale(0);
-}
-
-function setStatusBarHeight(height) {
-  splash.style.marginTop =  -height + 'px';
-}
-
-function create() {
-  splash = document.createElement('div');
-  splash.id = 'ts-splash-screen';
-
-  logo = document.createElement('div');
-  logo.id = 'ts-splash-logo';
-  splash.appendChild(logo);
-
-  iconContainer = document.createElement('div');
-  iconContainer.id = 'ts-splash-icon-container';
-  logo.appendChild(iconContainer);
-
-  overlap = document.createElement('div');
-  overlap.id = 'ts-splash-overlap';
-  iconContainer.appendChild(overlap);
-
-  icon = document.createElement('div');
-  icon.id = 'ts-splash-icon';
-  iconContainer.appendChild(icon);
-
-  loaderBox = document.createElement('div');
-  loaderBox.id = 'ts-splash-loader';
-  iconContainer.appendChild(loaderBox);
-
-  text = document.createElement('div');
-  text.id = 'ts-splash-logo-text';
-  logo.appendChild(text);
-
-  document.body.appendChild(splash);
-
-  checkOrientation();
-}
-
-module.exports = {
-  create: create,
-  show: show,
-  hide: hide,
-  setProgress: setProgress,
-  showLoader: showLoader,
-  hideLoader: hideLoader,
-  setStatusBarHeight: setStatusBarHeight
-};
-
-
-/***/ },
-/* 6 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
-var loader = __webpack_require__(4);
-var customSplash = __webpack_require__(5);
+var loader = __webpack_require__(3);
+var customSplash = __webpack_require__(2);
 
 function detectNavigatorLocale() {
   var language = window.navigator.language;
@@ -3032,33 +2968,56 @@ function detectNavigatorLocale() {
   }
 }
 
+function getDiv(id) {
+  var loaderError = document.getElementById(id);
+
+  if (!loaderError) {
+    loaderError = document.createElement('DIV');
+    loaderError.id = id;
+    document.body.appendChild(loaderError);
+  }
+
+  return loaderError;
+}
+
 function showErrorMessage(message) {
-  var error = document.getElementById('loader-error');
-  error.style.display = 'block';
-  error.innerHTML = 'Error: ' + message;
+  var loaderError = getDiv('loader-error');
+
+  loaderError.innerHTML = 'Error: ' + message;
+  loaderError.style.display = 'block';
+
   window.setTimeout(function () {
     customSplash.hideLoader();
   }, 200);
 }
 
-var loading = false;
-
 function getConfig() {
   var scriptNodes = document.getElementsByTagName('script');
   var currentlyLoadedScript = scriptNodes[scriptNodes.length - 1];
-  var config = currentlyLoadedScript.dataset;
-  return config;
+  return currentlyLoadedScript.dataset;
 }
 
-function startLoading() {
-  if (loading) {
+var isCordova = typeof window !== 'undefined' && typeof window.cordova !== 'undefined';
+var deviceReady = !isCordova;
+var loading = false;
+
+function startLoading(event) {
+  if (event.type === 'deviceready') {
+    deviceReady = true;
+  }
+
+  if (loading || !deviceReady) {
     return;
   }
 
   loading = true;
 
-  if (window.StatusBar) {
-    window.StatusBar.backgroundColorByHexString('#282828');
+  var config = getConfig();
+
+  if (typeof window !== 'undefined' && typeof window.StatusBar !== 'undefined') {
+    var statusBarBackgroundColor = config.statusBarBackgroundColor || '#282828';
+
+    window.StatusBar.backgroundColorByHexString(statusBarBackgroundColor);
     window.StatusBar.overlaysWebView(false);
   }
 
@@ -3084,15 +3043,15 @@ function startLoading() {
       window.navigator.splashscreen.hide();
     }
 
-    if (window.cordova) {
-      window.cordova.plugins.notification.badge.hasPermission(function (granted) {
+    if (window.plugins && window.plugins.notification) {
+      window.plugins.notification.badge.hasPermission(function (granted) {
         if (!granted) {
-          window.cordova.plugins.notification.badge.registerPermission();
+          window.plugins.notification.badge.registerPermission();
         }
       });
     }
 
-    if (window.I18n) {
+    if (typeof window.I18n !== 'undefined') {
       window.I18n.locale = detectNavigatorLocale();
     }
 
@@ -3112,26 +3071,639 @@ function startLoading() {
     return showErrorMessage('Please check your internet connection.');
   }
 
-  var config = getConfig();
-
   loader.load(config);
 }
 
 document.addEventListener('deviceready', startLoading, false);
 document.addEventListener('DOMContentLoaded', startLoading, false);
+document.addEventListener('error', showErrorMessage, false);
 
 customSplash.create();
 
 
 /***/ },
-/* 7 */
+/* 5 */
+/***/ function(module, exports) {
+
+/**
+ * Static Private functions
+ */
+
+/* createDir, recursively */
+function __createDir(rootDirEntry, folders, success,error) {
+  rootDirEntry.getDirectory(folders[0], {create: true}, function(dirEntry) {
+    // Recursively add the new subfolder (if we still have another to create).
+    if (folders.length > 1) {
+      __createDir(dirEntry, folders.slice(1),success,error);
+    } else {
+      success(dirEntry);
+    }
+  }, error);
+}
+
+function dirname(str) {
+  str = str.substr(0,str.lastIndexOf('/')+1);
+  if(str[0] === '/') str = str.substr(1);
+  return str;
+}
+
+function filename(str) {
+  return str.substr(str.lastIndexOf('/')+1);
+}
+
+function normalize(str){
+  str = str || '';
+  if(str[0] === '/') str = str.substr(1);
+
+  var tokens = str.split('/'), last = tokens[0];
+
+  // check tokens for instances of .. and .
+  for(var i=1;i < tokens.length;i++) {
+    last = tokens[i];
+    if (tokens[i] === '..') {
+      // remove the .. and the previous token
+      tokens.splice(i-1,2);
+      // rewind 'cursor' 2 tokens
+      i = i - 2;
+    } else if (tokens[i] === '.') {
+      // remove the .. and the previous token
+      tokens.splice(i,1);
+      // rewind 'cursor' 1 token
+      i--;
+    }
+  }
+
+  str = tokens.join('/');
+  if(str === './') {
+    str = '';
+  } else if(last && last.indexOf('.') < 0 && str[str.length - 1] != '/'){
+    str += '/';
+  }
+  return str;
+}
+
+var transferQueue = []; // queued fileTransfers
+var inprogress = 0;     // currently active filetransfers
+
+/**
+ * Factory function: Create a single instance (based on single FileSystem)
+ */
+module.exports = function(options){
+  /* Promise implementation */
+  var Promise = options.Promise || (typeof window !== 'undefined' && window.Promise);
+  if (!Promise) { throw new Error('No Promise library given in options.Promise'); }
+
+  /* default options */
+  options = options || {};
+  options.persistent = options.persistent !== undefined? options.persistent: true;
+  options.storageSize = options.storageSize || 20*1024*1024;
+  options.concurrency = options.concurrency || 3;
+  options.retry = options.retry || [];
+  options.debug = !!options.debug;
+
+  /* Cordova deviceready promise */
+  var deviceready, isCordova = typeof cordova !== 'undefined';
+
+  if (isCordova) {
+    deviceready = new Promise(function(resolve,reject){
+      document.addEventListener('deviceready', resolve, false);
+      setTimeout(function(){ reject(new Error('deviceready has not fired after 5 seconds.')); },5100);
+    });
+  } else {
+    /* FileTransfer implementation for Chrome */
+    deviceready = ResolvedPromise(true);
+
+    if (typeof webkitRequestFileSystem !== 'undefined' && typeof window !== 'undefined') {
+      window.requestFileSystem = webkitRequestFileSystem; // eslint-disable-line no-undef
+      window.FileTransfer = function FileTransfer(){};
+      window.FileTransfer.prototype.download = function download(url,file,win,fail) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState == 4) {
+            if(xhr.status === 200 && !this._aborted){
+              write(file,xhr.response).then(win,fail);
+            } else {
+              fail(xhr.status);
+            }
+          }
+        };
+        xhr.send();
+        return xhr;
+      };
+      window.FileTransfer.prototype.abort = function(){
+        this._aborted = true;
+      };
+      window.ProgressEvent = function ProgressEvent(){};
+      window.FileEntry = function FileEntry(){};
+    } else if (typeof window !== 'undefined') {
+      window.requestFileSystem = function(x,y,z,fail){
+        fail(new Error('requestFileSystem not supported!'));
+      };
+    }
+  }
+
+  /* Promise resolve helper */
+  function ResolvedPromise(value){
+    return new Promise(function(resolve){
+      return resolve(value);
+    });
+  }
+
+  /* the filesystem! */
+  var fs = new Promise(function(resolve,reject){
+    deviceready.then(function(){
+      if (typeof window == 'undefined') {
+        return reject(new Error('cordova-promise-fs must run in a browser'));
+      }
+
+      var type = options.persistent? 1: 0;
+      if(options.fileSystem && isCordova){
+        type = options.fileSystem;
+      }
+      // On chrome, request quota to store persistent files
+      if (!isCordova && type === 1 && navigator.webkitPersistentStorage) {
+        navigator.webkitPersistentStorage.requestQuota(options.storageSize, function(grantedBytes) {
+          window.requestFileSystem(type, grantedBytes, resolve, reject);
+        }, reject);
+      } else {
+        // Exotic Cordova Directories (options.fileSystem = string)
+        if(isNaN(type)) {
+          window.resolveLocalFileSystemURL(type, function (directory){
+            resolve(directory.filesystem);
+          },reject);
+        // Normal browser usage
+        } else {
+          window.requestFileSystem(type, options.storageSize, resolve, reject);
+        }
+      }
+
+      setTimeout(function () { reject(new Error('Could not retrieve FileSystem after 5 seconds.')); }, 5100);
+    },reject);
+  });
+
+  /* debug */
+  fs.then(function(fs){
+    window.CDV_URL_ROOT = fs.root.toURL();
+    window.CDV_INTERNAL_URL_ROOT = isCordova? fs.root.toInternalURL(): window.CDV_URL_ROOT;
+    window.__fs = fs;
+  },function(err){
+    console.error('Could not get Cordova FileSystem:',err);
+  });
+
+  /* ensure directory exists */
+  function ensure(folders) {
+    return new Promise(function (resolve, reject){
+      return fs.then(function (fs){
+        if(!folders) {
+          resolve(fs.root);
+        } else {
+          folders = folders.split('/').filter(function(folder) {
+            return folder && folder.length > 0 && folder !== '.' && folder !== '..';
+          });
+          __createDir(fs.root,folders,resolve,reject);
+        }
+      }, reject);
+    });
+  }
+
+    /* get file file */
+  function file(path,options){
+    return new Promise(function(resolve,reject){
+      if(typeof path === 'object') {
+        return resolve(path);
+      }
+      path = normalize(path);
+      options = options || {};
+      return fs.then(function(fs){
+        fs.root.getFile(path,options,resolve,reject);
+      },reject);
+    });
+  }
+
+  /* get directory entry */
+  function dir(path,options){
+    path = normalize(path);
+    options = options || {};
+    return new Promise(function(resolve,reject){
+      return fs.then(function(fs){
+        if(!path || path === '/') {
+          resolve(fs.root);
+        } else {
+          fs.root.getDirectory(path,options,resolve,reject);
+        }
+      },reject);
+    });
+  }
+
+  /* list contents of a directory */
+  function list(path,mode) {
+    mode = mode || '';
+    var recursive = mode.indexOf('r') > -1;
+    var getAsEntries = mode.indexOf('e') > -1;
+    var onlyFiles = mode.indexOf('f') > -1;
+    var onlyDirs = mode.indexOf('d') > -1;
+    if(onlyFiles && onlyDirs) {
+      onlyFiles = false;
+      onlyDirs = false;
+    }
+
+    return new Promise(function(resolve,reject){
+      return dir(path).then(function(dirEntry){
+        var dirReader = dirEntry.createReader();
+        dirReader.readEntries(function(entries) {
+          var promises = [ResolvedPromise(entries)];
+          if(recursive) {
+            entries
+              .filter(function(entry){return entry.isDirectory; })
+              .forEach(function(entry){
+                promises.push(list(entry.fullPath,'re'));
+              });
+          }
+          Promise.all(promises).then(function(values){
+            var entries = [];
+            entries = entries.concat.apply(entries,values);
+            if(onlyFiles) entries = entries.filter(function(entry) { return entry.isFile; });
+            if(onlyDirs) entries = entries.filter(function(entry) { return entry.isDirectory; });
+            if(!getAsEntries) entries = entries.map(function(entry) { return entry.fullPath; });
+            resolve(entries);
+          },reject);
+        }, reject);
+      },reject);
+    });
+  }
+
+  /* does file exist? If so, resolve with fileEntry, if not, resolve with false. */
+  function exists(path){
+    return new Promise(function(resolve,reject){
+      file(path).then(
+        function(fileEntry){
+          resolve(fileEntry);
+        },
+        function(err){
+          if(err.code === 1) {
+            resolve(false);
+          } else {
+            reject(err);
+          }
+        }
+      );
+    });
+  }
+
+  /* does dir exist? If so, resolve with fileEntry, if not, resolve with false. */
+  function existsDir(path){
+    return new Promise(function(resolve,reject){
+      dir(path).then(
+        function(dirEntry){
+          resolve(dirEntry);
+        },
+        function(err){
+          if(err.code === 1) {
+            resolve(false);
+          } else {
+            reject(err);
+          }
+        }
+      );
+    });
+  }
+
+  function create(path){
+    return ensure(dirname(path)).then(function(){
+      return file(path,{create:true});
+    });
+  }
+
+  /* convert path to URL to be used in JS/CSS/HTML */
+  function toURL(path) {
+    return file(path).then(function(fileEntry) {
+      return fileEntry.toURL();
+    });
+  }
+
+  /* convert path to URL to be used in JS/CSS/HTML */
+  var toInternalURL, toInternalURLSync, toURLSync;
+  window.CDV_INTERNAL_URL_ROOT = 'cdvfile://localhost/'+(options.persistent? 'persistent/':'temporary/');
+  window.CDV_URL_ROOT = '';
+  if(isCordova) {
+    /* synchronous helper to get internal URL. */
+    toInternalURLSync = function(path){
+      path = normalize(path);
+      return path.indexOf('://') < 0? window.CDV_INTERNAL_URL_ROOT + path: path;
+    };
+    /* synchronous helper to get native URL. */
+    toURLSync = function(path){
+      path = normalize(path);
+      return path.indexOf('://') < 0? window.CDV_URL_ROOT + path: path;
+    };
+
+    toInternalURL = function(path) {
+      return file(path).then(function(fileEntry) {
+        return fileEntry.toInternalURL();
+      });
+    };
+  } else {
+    /* synchronous helper to get internal URL. */
+    toInternalURLSync = function(path){
+      path = normalize(path);
+      return 'filesystem:'+location.origin+(options.persistent? '/persistent/':'/temporary/') + path;
+    };
+
+    toInternalURL = function(path) {
+      return file(path).then(function(fileEntry) {
+        return fileEntry.toURL();
+      });
+    };
+    toURLSync = toInternalURLSync;
+  }
+
+  /* return contents of a file */
+  function read(path,method) {
+    method = method || 'readAsText';
+    return file(path).then(function(fileEntry) {
+      return new Promise(function(resolve,reject){
+        fileEntry.file(function(file){
+          var reader = new FileReader();
+          reader.onloadend = function(){
+            resolve(this.result);
+          };
+          reader[method](file);
+        },reject);
+      });
+    });
+  }
+
+  /* convert path to base64 date URI */
+  function toDataURL(path) {
+    return read(path,'readAsDataURL');
+  }
+
+
+  function readJSON(path){
+    return read(path).then(JSON.parse);
+  }
+
+  /* write contents to a file */
+  function write(path,blob,mimeType) {
+    return ensure(dirname(path))
+      .then(function() { return file(path,{create:true}); })
+      .then(function(fileEntry) {
+        return new Promise(function(resolve,reject){
+          fileEntry.createWriter(function(writer){
+            writer.onwriteend = resolve;
+            writer.onerror = reject;
+            if(typeof blob === 'string') {
+              blob = createBlob([blob], mimeType || 'text/plain');
+            } else if(blob instanceof Blob !== true){
+              blob = createBlob([JSON.stringify(blob,null,4)], mimeType || 'application/json');
+            }
+            writer.write(blob);
+          },reject);
+        });
+      });
+  }
+
+  function createBlob(parts, type) {
+    var BlobBuilder, bb;
+    try {
+      return new Blob(parts, {type: type});
+    } catch(e) {
+      BlobBuilder = window.BlobBuilder ||
+        window.WebKitBlobBuilder ||
+        window.MozBlobBuilder ||
+        window.MSBlobBuilder;
+      if (BlobBuilder) {
+        bb = new BlobBuilder();
+        bb.append(parts);
+        return bb.getBlob(type);
+      } else {
+        throw new Error('Unable to create blob');
+      }
+    }
+  }
+
+  /* move a file */
+  function move(src,dest) {
+    return ensure(dirname(dest))
+      .then(function(dir) {
+        return file(src).then(function(fileEntry){
+          return new Promise(function(resolve,reject){
+            fileEntry.moveTo(dir,filename(dest),resolve,reject);
+          });
+        });
+      });
+  }
+
+  /* move a dir */
+  function moveDir(src,dest) {
+    src = src.replace(/\/$/, '');
+    dest = dest.replace(/\/$/, '');
+    return ensure(dirname(dest))
+      .then(function(destDir) {
+        return dir(src).then(function(dirEntry){
+          return new Promise(function(resolve,reject){
+            dirEntry.moveTo(destDir,filename(dest),resolve,reject);
+          });
+        });
+      });
+  }
+
+  /* copy a file */
+  function copy(src,dest) {
+    return ensure(dirname(dest))
+      .then(function(dir) {
+        return file(src).then(function(fileEntry){
+          return new Promise(function(resolve,reject){
+            fileEntry.copyTo(dir,filename(dest),resolve,reject);
+          });
+        });
+      });
+  }
+
+  /* delete a file */
+  function remove(path,mustExist) {
+    var method = mustExist? file:exists;
+    return new Promise(function(resolve,reject){
+      method(path).then(function(fileEntry){
+        if(fileEntry !== false) {
+          fileEntry.remove(resolve,reject);
+        } else {
+          resolve(1);
+        }
+      },reject);
+    }).then(function(val){
+      return val === 1? false: true;
+    });
+  }
+
+  /* delete a directory */
+  function removeDir(path) {
+    return dir(path).then(function(dirEntry){
+      return new Promise(function(resolve,reject) {
+        dirEntry.removeRecursively(resolve,reject);
+      });
+    });
+  }
+
+  // Whenever we want to start a transfer, we call popTransferQueue
+  function popTransferQueue(){
+    // while we are not at max concurrency
+    while(transferQueue.length > 0 && inprogress < options.concurrency) {
+      // increment activity counter
+      inprogress++;
+
+      // fetch filetranfer, method-type (isDownload) and arguments
+      var args = transferQueue.pop();
+      var ft = args.fileTransfer,
+        isDownload = args.isDownload,
+        serverUrl = args.serverUrl,
+        localPath = args.localPath,
+        trustAllHosts = args.trustAllHosts,
+        transferOptions = args.transferOptions,
+        win = args.win,
+        fail = args.fail;
+
+      if(ft._aborted) {
+        inprogress--;
+      } else if(isDownload){
+        ft.download.call(ft,serverUrl,localPath,win,fail,trustAllHosts,transferOptions);
+        if(ft.onprogress) ft.onprogress(new ProgressEvent());
+      } else {
+        ft.upload.call(ft,localPath,serverUrl,win,fail,transferOptions,trustAllHosts);
+      }
+    }
+    // if we are at max concurrency, popTransferQueue() will be called whenever
+    // the transfer is ready and there is space avaialable.
+  }
+
+  // Promise callback to check if there are any more queued transfers
+  function nextTransfer(result){
+    inprogress--; // decrement counter to free up one space to start transfers again!
+    popTransferQueue(); // check if there are any queued transfers
+    return result;
+  }
+
+  function filetransfer(isDownload,serverUrl,localPath,transferOptions,onprogress){
+    if(typeof transferOptions === 'function') {
+      onprogress = transferOptions;
+      transferOptions = {};
+    }
+    if(isCordova && localPath.indexOf('://') < 0) localPath = toURLSync(localPath);
+
+    transferOptions = transferOptions || {};
+    if(!transferOptions.retry || !transferOptions.retry.length) {
+      transferOptions.retry = options.retry;
+    }
+    transferOptions.retry = transferOptions.retry.concat();
+    if(!transferOptions.file && !isDownload){
+      transferOptions.fileName = filename(localPath);
+    }
+
+    var ft = new window.FileTransfer();
+    onprogress = onprogress || transferOptions.onprogress;
+    if(typeof onprogress === 'function') ft.onprogress = onprogress;
+    var promise = new Promise(function(resolve,reject){
+      var attempt = function(err){
+        if(transferOptions.retry.length === 0) {
+          if(options.debug) console.log('FileTransfer Error: '+serverUrl,err);
+          reject(err);
+        } else {
+
+          var transferJob = {
+            fileTransfer:ft,
+            isDownload:isDownload,
+            serverUrl:serverUrl,
+            localPath:localPath,
+            trustAllHosts:transferOptions.trustAllHosts || false,
+            transferOptions:transferOptions,
+            win:resolve,
+            fail:attempt
+          };
+          transferQueue.unshift(transferJob);
+          var timeout = transferOptions.retry.shift();
+          if(timeout > 0) {
+            setTimeout(nextTransfer,timeout);
+          } else {
+            nextTransfer();
+          }
+        }
+      };
+      transferOptions.retry.unshift(0);
+      inprogress++;
+      attempt();
+    });
+    promise.then(nextTransfer,nextTransfer);
+    promise.progress = function(onprogress){
+      ft.onprogress = onprogress;
+      return promise;
+    };
+    promise.abort = function(){
+      ft._aborted = true;
+      ft.abort();
+      return promise;
+    };
+    return promise;
+  }
+
+  function download(url,dest,options,onprogress){
+    return filetransfer(true,url,dest,options,onprogress);
+  }
+
+  function upload(source,dest,options,onprogress){
+    return filetransfer(false,dest,source,options,onprogress);
+  }
+
+  return {
+    fs: fs,
+    normalize: normalize,
+    file: file,
+    filename: filename,
+    dir: dir,
+    dirname: dirname,
+    create:create,
+    read: read,
+    readJSON: readJSON,
+    write: write,
+    move: move,
+    moveDir: moveDir,
+    copy: copy,
+    remove: remove,
+    removeDir: removeDir,
+    list: list,
+    ensure: ensure,
+    exists: exists,
+    existsDir: existsDir,
+    download: download,
+    upload: upload,
+    toURL:toURL,
+    isCordova:isCordova,
+    toInternalURLSync: toInternalURLSync,
+    toInternalURL:toInternalURL,
+    toDataURL:toDataURL,
+    deviceready: deviceready,
+    options: options,
+    Promise: Promise
+  };
+};
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-var Promise = window.Promise = __webpack_require__(1).Promise;
-var LZString = __webpack_require__(12);
+var Promise = __webpack_require__(0).Promise;
+var LZString = __webpack_require__(10);
 
-var ls = window.localStorage;
+var ls = typeof window !== 'undefined' ? window.localStorage : {
+  getItem: function () { throw new Error('lspfs not available'); },
+  setItem: function () { throw new Error('lspfs not available'); }
+};
+
 var prefix = 'lspfs:';
+
+const NOT_FOUND_ERR = 1;
 
 function Writer(path, onerror) {
   this.onwriteend = function () {};
@@ -3189,7 +3761,7 @@ function read(path) {
 
   if (compressed === null) {
     var error = new Error('no such file or directory \'' + path + '\'');
-    error.code = 'ENOENT';
+    error.code = NOT_FOUND_ERR;
 
     return Promise.reject(error);
   }
@@ -3222,7 +3794,7 @@ module.exports = {
 
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports) {
 
 function objectAssign() {
@@ -3248,10 +3820,10 @@ module.exports = objectAssign;
 
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-var Promise = __webpack_require__(1).Promise;
+var Promise = __webpack_require__(0).Promise;
 
 function xhrPromise(url, responseType) {
   responseType = responseType || 'arraybuffer';
@@ -3294,505 +3866,7 @@ module.exports = xhrPromise;
 
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {'use strict';
-
-// compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
-// original notice:
-
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
- * @license  MIT
- */
-function compare(a, b) {
-  if (a === b) {
-    return 0;
-  }
-
-  var x = a.length;
-  var y = b.length;
-
-  for (var i = 0, len = Math.min(x, y); i < len; ++i) {
-    if (a[i] !== b[i]) {
-      x = a[i];
-      y = b[i];
-      break;
-    }
-  }
-
-  if (x < y) {
-    return -1;
-  }
-  if (y < x) {
-    return 1;
-  }
-  return 0;
-}
-function isBuffer(b) {
-  if (global.Buffer && typeof global.Buffer.isBuffer === 'function') {
-    return global.Buffer.isBuffer(b);
-  }
-  return !!(b != null && b._isBuffer);
-}
-
-// based on node assert, original notice:
-
-// http://wiki.commonjs.org/wiki/Unit_Testing/1.0
-//
-// THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
-//
-// Originally from narwhal.js (http://narwhaljs.org)
-// Copyright (c) 2009 Thomas Robinson <280north.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the 'Software'), to
-// deal in the Software without restriction, including without limitation the
-// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-// sell copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-// ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var util = __webpack_require__(18);
-var hasOwn = Object.prototype.hasOwnProperty;
-var pSlice = Array.prototype.slice;
-var functionsHaveNames = (function () {
-  return function foo() {}.name === 'foo';
-}());
-function pToString (obj) {
-  return Object.prototype.toString.call(obj);
-}
-function isView(arrbuf) {
-  if (isBuffer(arrbuf)) {
-    return false;
-  }
-  if (typeof global.ArrayBuffer !== 'function') {
-    return false;
-  }
-  if (typeof ArrayBuffer.isView === 'function') {
-    return ArrayBuffer.isView(arrbuf);
-  }
-  if (!arrbuf) {
-    return false;
-  }
-  if (arrbuf instanceof DataView) {
-    return true;
-  }
-  if (arrbuf.buffer && arrbuf.buffer instanceof ArrayBuffer) {
-    return true;
-  }
-  return false;
-}
-// 1. The assert module provides functions that throw
-// AssertionError's when particular conditions are not met. The
-// assert module must conform to the following interface.
-
-var assert = module.exports = ok;
-
-// 2. The AssertionError is defined in assert.
-// new assert.AssertionError({ message: message,
-//                             actual: actual,
-//                             expected: expected })
-
-var regex = /\s*function\s+([^\(\s]*)\s*/;
-// based on https://github.com/ljharb/function.prototype.name/blob/adeeeec8bfcc6068b187d7d9fb3d5bb1d3a30899/implementation.js
-function getName(func) {
-  if (!util.isFunction(func)) {
-    return;
-  }
-  if (functionsHaveNames) {
-    return func.name;
-  }
-  var str = func.toString();
-  var match = str.match(regex);
-  return match && match[1];
-}
-assert.AssertionError = function AssertionError(options) {
-  this.name = 'AssertionError';
-  this.actual = options.actual;
-  this.expected = options.expected;
-  this.operator = options.operator;
-  if (options.message) {
-    this.message = options.message;
-    this.generatedMessage = false;
-  } else {
-    this.message = getMessage(this);
-    this.generatedMessage = true;
-  }
-  var stackStartFunction = options.stackStartFunction || fail;
-  if (Error.captureStackTrace) {
-    Error.captureStackTrace(this, stackStartFunction);
-  } else {
-    // non v8 browsers so we can have a stacktrace
-    var err = new Error();
-    if (err.stack) {
-      var out = err.stack;
-
-      // try to strip useless frames
-      var fn_name = getName(stackStartFunction);
-      var idx = out.indexOf('\n' + fn_name);
-      if (idx >= 0) {
-        // once we have located the function frame
-        // we need to strip out everything before it (and its line)
-        var next_line = out.indexOf('\n', idx + 1);
-        out = out.substring(next_line + 1);
-      }
-
-      this.stack = out;
-    }
-  }
-};
-
-// assert.AssertionError instanceof Error
-util.inherits(assert.AssertionError, Error);
-
-function truncate(s, n) {
-  if (typeof s === 'string') {
-    return s.length < n ? s : s.slice(0, n);
-  } else {
-    return s;
-  }
-}
-function inspect(something) {
-  if (functionsHaveNames || !util.isFunction(something)) {
-    return util.inspect(something);
-  }
-  var rawname = getName(something);
-  var name = rawname ? ': ' + rawname : '';
-  return '[Function' +  name + ']';
-}
-function getMessage(self) {
-  return truncate(inspect(self.actual), 128) + ' ' +
-         self.operator + ' ' +
-         truncate(inspect(self.expected), 128);
-}
-
-// At present only the three keys mentioned above are used and
-// understood by the spec. Implementations or sub modules can pass
-// other keys to the AssertionError's constructor - they will be
-// ignored.
-
-// 3. All of the following functions must throw an AssertionError
-// when a corresponding condition is not met, with a message that
-// may be undefined if not provided.  All assertion methods provide
-// both the actual and expected values to the assertion error for
-// display purposes.
-
-function fail(actual, expected, message, operator, stackStartFunction) {
-  throw new assert.AssertionError({
-    message: message,
-    actual: actual,
-    expected: expected,
-    operator: operator,
-    stackStartFunction: stackStartFunction
-  });
-}
-
-// EXTENSION! allows for well behaved errors defined elsewhere.
-assert.fail = fail;
-
-// 4. Pure assertion tests whether a value is truthy, as determined
-// by !!guard.
-// assert.ok(guard, message_opt);
-// This statement is equivalent to assert.equal(true, !!guard,
-// message_opt);. To test strictly for the value true, use
-// assert.strictEqual(true, guard, message_opt);.
-
-function ok(value, message) {
-  if (!value) fail(value, true, message, '==', assert.ok);
-}
-assert.ok = ok;
-
-// 5. The equality assertion tests shallow, coercive equality with
-// ==.
-// assert.equal(actual, expected, message_opt);
-
-assert.equal = function equal(actual, expected, message) {
-  if (actual != expected) fail(actual, expected, message, '==', assert.equal);
-};
-
-// 6. The non-equality assertion tests for whether two objects are not equal
-// with != assert.notEqual(actual, expected, message_opt);
-
-assert.notEqual = function notEqual(actual, expected, message) {
-  if (actual == expected) {
-    fail(actual, expected, message, '!=', assert.notEqual);
-  }
-};
-
-// 7. The equivalence assertion tests a deep equality relation.
-// assert.deepEqual(actual, expected, message_opt);
-
-assert.deepEqual = function deepEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, false)) {
-    fail(actual, expected, message, 'deepEqual', assert.deepEqual);
-  }
-};
-
-assert.deepStrictEqual = function deepStrictEqual(actual, expected, message) {
-  if (!_deepEqual(actual, expected, true)) {
-    fail(actual, expected, message, 'deepStrictEqual', assert.deepStrictEqual);
-  }
-};
-
-function _deepEqual(actual, expected, strict, memos) {
-  // 7.1. All identical values are equivalent, as determined by ===.
-  if (actual === expected) {
-    return true;
-  } else if (isBuffer(actual) && isBuffer(expected)) {
-    return compare(actual, expected) === 0;
-
-  // 7.2. If the expected value is a Date object, the actual value is
-  // equivalent if it is also a Date object that refers to the same time.
-  } else if (util.isDate(actual) && util.isDate(expected)) {
-    return actual.getTime() === expected.getTime();
-
-  // 7.3 If the expected value is a RegExp object, the actual value is
-  // equivalent if it is also a RegExp object with the same source and
-  // properties (`global`, `multiline`, `lastIndex`, `ignoreCase`).
-  } else if (util.isRegExp(actual) && util.isRegExp(expected)) {
-    return actual.source === expected.source &&
-           actual.global === expected.global &&
-           actual.multiline === expected.multiline &&
-           actual.lastIndex === expected.lastIndex &&
-           actual.ignoreCase === expected.ignoreCase;
-
-  // 7.4. Other pairs that do not both pass typeof value == 'object',
-  // equivalence is determined by ==.
-  } else if ((actual === null || typeof actual !== 'object') &&
-             (expected === null || typeof expected !== 'object')) {
-    return strict ? actual === expected : actual == expected;
-
-  // If both values are instances of typed arrays, wrap their underlying
-  // ArrayBuffers in a Buffer each to increase performance
-  // This optimization requires the arrays to have the same type as checked by
-  // Object.prototype.toString (aka pToString). Never perform binary
-  // comparisons for Float*Arrays, though, since e.g. +0 === -0 but their
-  // bit patterns are not identical.
-  } else if (isView(actual) && isView(expected) &&
-             pToString(actual) === pToString(expected) &&
-             !(actual instanceof Float32Array ||
-               actual instanceof Float64Array)) {
-    return compare(new Uint8Array(actual.buffer),
-                   new Uint8Array(expected.buffer)) === 0;
-
-  // 7.5 For all other Object pairs, including Array objects, equivalence is
-  // determined by having the same number of owned properties (as verified
-  // with Object.prototype.hasOwnProperty.call), the same set of keys
-  // (although not necessarily the same order), equivalent values for every
-  // corresponding key, and an identical 'prototype' property. Note: this
-  // accounts for both named and indexed properties on Arrays.
-  } else if (isBuffer(actual) !== isBuffer(expected)) {
-    return false;
-  } else {
-    memos = memos || {actual: [], expected: []};
-
-    var actualIndex = memos.actual.indexOf(actual);
-    if (actualIndex !== -1) {
-      if (actualIndex === memos.expected.indexOf(expected)) {
-        return true;
-      }
-    }
-
-    memos.actual.push(actual);
-    memos.expected.push(expected);
-
-    return objEquiv(actual, expected, strict, memos);
-  }
-}
-
-function isArguments(object) {
-  return Object.prototype.toString.call(object) == '[object Arguments]';
-}
-
-function objEquiv(a, b, strict, actualVisitedObjects) {
-  if (a === null || a === undefined || b === null || b === undefined)
-    return false;
-  // if one is a primitive, the other must be same
-  if (util.isPrimitive(a) || util.isPrimitive(b))
-    return a === b;
-  if (strict && Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
-    return false;
-  var aIsArgs = isArguments(a);
-  var bIsArgs = isArguments(b);
-  if ((aIsArgs && !bIsArgs) || (!aIsArgs && bIsArgs))
-    return false;
-  if (aIsArgs) {
-    a = pSlice.call(a);
-    b = pSlice.call(b);
-    return _deepEqual(a, b, strict);
-  }
-  var ka = objectKeys(a);
-  var kb = objectKeys(b);
-  var key, i;
-  // having the same number of owned properties (keys incorporates
-  // hasOwnProperty)
-  if (ka.length !== kb.length)
-    return false;
-  //the same set of keys (although not necessarily the same order),
-  ka.sort();
-  kb.sort();
-  //~~~cheap key test
-  for (i = ka.length - 1; i >= 0; i--) {
-    if (ka[i] !== kb[i])
-      return false;
-  }
-  //equivalent values for every corresponding key, and
-  //~~~possibly expensive deep test
-  for (i = ka.length - 1; i >= 0; i--) {
-    key = ka[i];
-    if (!_deepEqual(a[key], b[key], strict, actualVisitedObjects))
-      return false;
-  }
-  return true;
-}
-
-// 8. The non-equivalence assertion tests for any deep inequality.
-// assert.notDeepEqual(actual, expected, message_opt);
-
-assert.notDeepEqual = function notDeepEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, false)) {
-    fail(actual, expected, message, 'notDeepEqual', assert.notDeepEqual);
-  }
-};
-
-assert.notDeepStrictEqual = notDeepStrictEqual;
-function notDeepStrictEqual(actual, expected, message) {
-  if (_deepEqual(actual, expected, true)) {
-    fail(actual, expected, message, 'notDeepStrictEqual', notDeepStrictEqual);
-  }
-}
-
-
-// 9. The strict equality assertion tests strict equality, as determined by ===.
-// assert.strictEqual(actual, expected, message_opt);
-
-assert.strictEqual = function strictEqual(actual, expected, message) {
-  if (actual !== expected) {
-    fail(actual, expected, message, '===', assert.strictEqual);
-  }
-};
-
-// 10. The strict non-equality assertion tests for strict inequality, as
-// determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
-
-assert.notStrictEqual = function notStrictEqual(actual, expected, message) {
-  if (actual === expected) {
-    fail(actual, expected, message, '!==', assert.notStrictEqual);
-  }
-};
-
-function expectedException(actual, expected) {
-  if (!actual || !expected) {
-    return false;
-  }
-
-  if (Object.prototype.toString.call(expected) == '[object RegExp]') {
-    return expected.test(actual);
-  }
-
-  try {
-    if (actual instanceof expected) {
-      return true;
-    }
-  } catch (e) {
-    // Ignore.  The instanceof check doesn't work for arrow functions.
-  }
-
-  if (Error.isPrototypeOf(expected)) {
-    return false;
-  }
-
-  return expected.call({}, actual) === true;
-}
-
-function _tryBlock(block) {
-  var error;
-  try {
-    block();
-  } catch (e) {
-    error = e;
-  }
-  return error;
-}
-
-function _throws(shouldThrow, block, expected, message) {
-  var actual;
-
-  if (typeof block !== 'function') {
-    throw new TypeError('"block" argument must be a function');
-  }
-
-  if (typeof expected === 'string') {
-    message = expected;
-    expected = null;
-  }
-
-  actual = _tryBlock(block);
-
-  message = (expected && expected.name ? ' (' + expected.name + ').' : '.') +
-            (message ? ' ' + message : '.');
-
-  if (shouldThrow && !actual) {
-    fail(actual, expected, 'Missing expected exception' + message);
-  }
-
-  var userProvidedMessage = typeof message === 'string';
-  var isUnwantedException = !shouldThrow && util.isError(actual);
-  var isUnexpectedException = !shouldThrow && actual && !expected;
-
-  if ((isUnwantedException &&
-      userProvidedMessage &&
-      expectedException(actual, expected)) ||
-      isUnexpectedException) {
-    fail(actual, expected, 'Got unwanted exception' + message);
-  }
-
-  if ((shouldThrow && actual && expected &&
-      !expectedException(actual, expected)) || (!shouldThrow && actual)) {
-    throw actual;
-  }
-}
-
-// 11. Expected to throw an error:
-// assert.throws(block, Error_opt, message_opt);
-
-assert.throws = function(block, /*optional*/error, /*optional*/message) {
-  _throws(true, block, error, message);
-};
-
-// EXTENSION! This is annoying to write outside this module.
-assert.doesNotThrow = function(block, /*optional*/error, /*optional*/message) {
-  _throws(false, block, error, message);
-};
-
-assert.ifError = function(err) { if (err) throw err; };
-
-var objectKeys = Object.keys || function (obj) {
-  var keys = [];
-  for (var key in obj) {
-    if (hasOwn.call(obj, key)) keys.push(key);
-  }
-  return keys;
-};
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
-
-/***/ },
-/* 11 */
+/* 9 */
 /***/ function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -4100,7 +4174,7 @@ function isUndefined(arg) {
 
 
 /***/ },
-/* 12 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;// Copyright (c) 2013 Pieroxy <pieroxy@pieroxy.net>
@@ -4607,7 +4681,7 @@ if (true) {
 
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {exports = module.exports = SemVer;
@@ -5814,10 +5888,203 @@ function prerelease(version, loose) {
   return (parsed && parsed.prerelease.length) ? parsed.prerelease : null;
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 14 */
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(1)))
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 (function (factory) {
@@ -6526,7 +6793,7 @@ function prerelease(version, loose) {
 
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 "use strict";
@@ -6606,643 +6873,94 @@ function Delayed(resolve, fn, self, args) {
 
 
 /***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(window, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(12);
+exports.setImmediate = setImmediate;
+exports.clearImmediate = clearImmediate;
+
+
+/***/ },
 /* 16 */
 /***/ function(module, exports) {
 
-if (typeof Object.create === 'function') {
-  // implementation from standard node.js 'util' module
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    ctor.prototype = Object.create(superCtor.prototype, {
-      constructor: {
-        value: ctor,
-        enumerable: false,
-        writable: true,
-        configurable: true
-      }
-    });
-  };
-} else {
-  // old school shim for old browsers
-  module.exports = function inherits(ctor, superCtor) {
-    ctor.super_ = superCtor
-    var TempCtor = function () {}
-    TempCtor.prototype = superCtor.prototype
-    ctor.prototype = new TempCtor()
-    ctor.prototype.constructor = ctor
-  }
+var g;
+
+// This works in non-strict mode
+g = (function() { return this; })();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
 }
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
 
 
 /***/ },
 /* 17 */
-/***/ function(module, exports) {
-
-module.exports = function isBuffer(arg) {
-  return arg && typeof arg === 'object'
-    && typeof arg.copy === 'function'
-    && typeof arg.fill === 'function'
-    && typeof arg.readUInt8 === 'function';
-}
-
-/***/ },
-/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var formatRegExp = /%[sdj%]/g;
-exports.format = function(f) {
-  if (!isString(f)) {
-    var objects = [];
-    for (var i = 0; i < arguments.length; i++) {
-      objects.push(inspect(arguments[i]));
-    }
-    return objects.join(' ');
-  }
-
-  var i = 1;
-  var args = arguments;
-  var len = args.length;
-  var str = String(f).replace(formatRegExp, function(x) {
-    if (x === '%%') return '%';
-    if (i >= len) return x;
-    switch (x) {
-      case '%s': return String(args[i++]);
-      case '%d': return Number(args[i++]);
-      case '%j':
-        try {
-          return JSON.stringify(args[i++]);
-        } catch (_) {
-          return '[Circular]';
-        }
-      default:
-        return x;
-    }
-  });
-  for (var x = args[i]; i < len; x = args[++i]) {
-    if (isNull(x) || !isObject(x)) {
-      str += ' ' + x;
-    } else {
-      str += ' ' + inspect(x);
-    }
-  }
-  return str;
-};
-
-
-// Mark that a method should not be used.
-// Returns a modified function which warns once by default.
-// If --no-deprecation is set, then it is a no-op.
-exports.deprecate = function(fn, msg) {
-  // Allow for deprecating things in the process of starting up.
-  if (isUndefined(global.process)) {
-    return function() {
-      return exports.deprecate(fn, msg).apply(this, arguments);
-    };
-  }
-
-  if (process.noDeprecation === true) {
-    return fn;
-  }
-
-  var warned = false;
-  function deprecated() {
-    if (!warned) {
-      if (process.throwDeprecation) {
-        throw new Error(msg);
-      } else if (process.traceDeprecation) {
-        console.trace(msg);
-      } else {
-        console.error(msg);
-      }
-      warned = true;
-    }
-    return fn.apply(this, arguments);
-  }
-
-  return deprecated;
-};
-
-
-var debugs = {};
-var debugEnviron;
-exports.debuglog = function(set) {
-  if (isUndefined(debugEnviron))
-    debugEnviron = {"NODE_ENV":"production"}.NODE_DEBUG || '';
-  set = set.toUpperCase();
-  if (!debugs[set]) {
-    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
-      var pid = process.pid;
-      debugs[set] = function() {
-        var msg = exports.format.apply(exports, arguments);
-        console.error('%s %d: %s', set, pid, msg);
-      };
-    } else {
-      debugs[set] = function() {};
-    }
-  }
-  return debugs[set];
-};
-
-
-/**
- * Echos the value of a value. Trys to print the value out
- * in the best way possible given the different types.
- *
- * @param {Object} obj The object to print out.
- * @param {Object} opts Optional options object that alters the output.
- */
-/* legacy: obj, showHidden, depth, colors*/
-function inspect(obj, opts) {
-  // default options
-  var ctx = {
-    seen: [],
-    stylize: stylizeNoColor
-  };
-  // legacy...
-  if (arguments.length >= 3) ctx.depth = arguments[2];
-  if (arguments.length >= 4) ctx.colors = arguments[3];
-  if (isBoolean(opts)) {
-    // legacy...
-    ctx.showHidden = opts;
-  } else if (opts) {
-    // got an "options" object
-    exports._extend(ctx, opts);
-  }
-  // set default options
-  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
-  if (isUndefined(ctx.depth)) ctx.depth = 2;
-  if (isUndefined(ctx.colors)) ctx.colors = false;
-  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
-  if (ctx.colors) ctx.stylize = stylizeWithColor;
-  return formatValue(ctx, obj, ctx.depth);
-}
-exports.inspect = inspect;
-
-
-// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
-inspect.colors = {
-  'bold' : [1, 22],
-  'italic' : [3, 23],
-  'underline' : [4, 24],
-  'inverse' : [7, 27],
-  'white' : [37, 39],
-  'grey' : [90, 39],
-  'black' : [30, 39],
-  'blue' : [34, 39],
-  'cyan' : [36, 39],
-  'green' : [32, 39],
-  'magenta' : [35, 39],
-  'red' : [31, 39],
-  'yellow' : [33, 39]
-};
-
-// Don't use 'blue' not visible on cmd.exe
-inspect.styles = {
-  'special': 'cyan',
-  'number': 'yellow',
-  'boolean': 'yellow',
-  'undefined': 'grey',
-  'null': 'bold',
-  'string': 'green',
-  'date': 'magenta',
-  // "name": intentionally not styling
-  'regexp': 'red'
-};
-
-
-function stylizeWithColor(str, styleType) {
-  var style = inspect.styles[styleType];
-
-  if (style) {
-    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
-           '\u001b[' + inspect.colors[style][1] + 'm';
-  } else {
-    return str;
-  }
-}
-
-
-function stylizeNoColor(str, styleType) {
-  return str;
-}
-
-
-function arrayToHash(array) {
-  var hash = {};
-
-  array.forEach(function(val, idx) {
-    hash[val] = true;
-  });
-
-  return hash;
-}
-
-
-function formatValue(ctx, value, recurseTimes) {
-  // Provide a hook for user-specified inspect functions.
-  // Check that value is an object with an inspect function on it
-  if (ctx.customInspect &&
-      value &&
-      isFunction(value.inspect) &&
-      // Filter out the util module, it's inspect function is special
-      value.inspect !== exports.inspect &&
-      // Also filter out any prototype objects using the circular check.
-      !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes, ctx);
-    if (!isString(ret)) {
-      ret = formatValue(ctx, ret, recurseTimes);
-    }
-    return ret;
-  }
-
-  // Primitive types cannot have properties
-  var primitive = formatPrimitive(ctx, value);
-  if (primitive) {
-    return primitive;
-  }
-
-  // Look up the keys of the object.
-  var keys = Object.keys(value);
-  var visibleKeys = arrayToHash(keys);
-
-  if (ctx.showHidden) {
-    keys = Object.getOwnPropertyNames(value);
-  }
-
-  // IE doesn't make error fields non-enumerable
-  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
-  if (isError(value)
-      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
-    return formatError(value);
-  }
-
-  // Some type of object without properties can be shortcutted.
-  if (keys.length === 0) {
-    if (isFunction(value)) {
-      var name = value.name ? ': ' + value.name : '';
-      return ctx.stylize('[Function' + name + ']', 'special');
-    }
-    if (isRegExp(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    }
-    if (isDate(value)) {
-      return ctx.stylize(Date.prototype.toString.call(value), 'date');
-    }
-    if (isError(value)) {
-      return formatError(value);
-    }
-  }
-
-  var base = '', array = false, braces = ['{', '}'];
-
-  // Make Array say that they are Array
-  if (isArray(value)) {
-    array = true;
-    braces = ['[', ']'];
-  }
-
-  // Make functions say that they are functions
-  if (isFunction(value)) {
-    var n = value.name ? ': ' + value.name : '';
-    base = ' [Function' + n + ']';
-  }
-
-  // Make RegExps say that they are RegExps
-  if (isRegExp(value)) {
-    base = ' ' + RegExp.prototype.toString.call(value);
-  }
-
-  // Make dates with properties first say the date
-  if (isDate(value)) {
-    base = ' ' + Date.prototype.toUTCString.call(value);
-  }
-
-  // Make error with message first say the error
-  if (isError(value)) {
-    base = ' ' + formatError(value);
-  }
-
-  if (keys.length === 0 && (!array || value.length == 0)) {
-    return braces[0] + base + braces[1];
-  }
-
-  if (recurseTimes < 0) {
-    if (isRegExp(value)) {
-      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
-    } else {
-      return ctx.stylize('[Object]', 'special');
-    }
-  }
-
-  ctx.seen.push(value);
-
-  var output;
-  if (array) {
-    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
-  } else {
-    output = keys.map(function(key) {
-      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
-    });
-  }
-
-  ctx.seen.pop();
-
-  return reduceToSingleString(output, base, braces);
-}
-
-
-function formatPrimitive(ctx, value) {
-  if (isUndefined(value))
-    return ctx.stylize('undefined', 'undefined');
-  if (isString(value)) {
-    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
-                                             .replace(/'/g, "\\'")
-                                             .replace(/\\"/g, '"') + '\'';
-    return ctx.stylize(simple, 'string');
-  }
-  if (isNumber(value))
-    return ctx.stylize('' + value, 'number');
-  if (isBoolean(value))
-    return ctx.stylize('' + value, 'boolean');
-  // For some reason typeof null is "object", so special case here.
-  if (isNull(value))
-    return ctx.stylize('null', 'null');
-}
-
-
-function formatError(value) {
-  return '[' + Error.prototype.toString.call(value) + ']';
-}
-
-
-function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
-  var output = [];
-  for (var i = 0, l = value.length; i < l; ++i) {
-    if (hasOwnProperty(value, String(i))) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          String(i), true));
-    } else {
-      output.push('');
-    }
-  }
-  keys.forEach(function(key) {
-    if (!key.match(/^\d+$/)) {
-      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
-          key, true));
-    }
-  });
-  return output;
-}
-
-
-function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
-  var name, str, desc;
-  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
-  if (desc.get) {
-    if (desc.set) {
-      str = ctx.stylize('[Getter/Setter]', 'special');
-    } else {
-      str = ctx.stylize('[Getter]', 'special');
-    }
-  } else {
-    if (desc.set) {
-      str = ctx.stylize('[Setter]', 'special');
-    }
-  }
-  if (!hasOwnProperty(visibleKeys, key)) {
-    name = '[' + key + ']';
-  }
-  if (!str) {
-    if (ctx.seen.indexOf(desc.value) < 0) {
-      if (isNull(recurseTimes)) {
-        str = formatValue(ctx, desc.value, null);
-      } else {
-        str = formatValue(ctx, desc.value, recurseTimes - 1);
-      }
-      if (str.indexOf('\n') > -1) {
-        if (array) {
-          str = str.split('\n').map(function(line) {
-            return '  ' + line;
-          }).join('\n').substr(2);
-        } else {
-          str = '\n' + str.split('\n').map(function(line) {
-            return '   ' + line;
-          }).join('\n');
-        }
-      }
-    } else {
-      str = ctx.stylize('[Circular]', 'special');
-    }
-  }
-  if (isUndefined(name)) {
-    if (array && key.match(/^\d+$/)) {
-      return str;
-    }
-    name = JSON.stringify('' + key);
-    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
-      name = name.substr(1, name.length - 2);
-      name = ctx.stylize(name, 'name');
-    } else {
-      name = name.replace(/'/g, "\\'")
-                 .replace(/\\"/g, '"')
-                 .replace(/(^"|"$)/g, "'");
-      name = ctx.stylize(name, 'string');
-    }
-  }
-
-  return name + ': ' + str;
-}
-
-
-function reduceToSingleString(output, base, braces) {
-  var numLinesEst = 0;
-  var length = output.reduce(function(prev, cur) {
-    numLinesEst++;
-    if (cur.indexOf('\n') >= 0) numLinesEst++;
-    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
-  }, 0);
-
-  if (length > 60) {
-    return braces[0] +
-           (base === '' ? '' : base + '\n ') +
-           ' ' +
-           output.join(',\n  ') +
-           ' ' +
-           braces[1];
-  }
-
-  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
-}
-
-
-// NOTE: These type checking functions intentionally don't use `instanceof`
-// because it is fragile and can be easily faked with `Object.create()`.
-function isArray(ar) {
-  return Array.isArray(ar);
-}
-exports.isArray = isArray;
-
-function isBoolean(arg) {
-  return typeof arg === 'boolean';
-}
-exports.isBoolean = isBoolean;
-
-function isNull(arg) {
-  return arg === null;
-}
-exports.isNull = isNull;
-
-function isNullOrUndefined(arg) {
-  return arg == null;
-}
-exports.isNullOrUndefined = isNullOrUndefined;
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-exports.isNumber = isNumber;
-
-function isString(arg) {
-  return typeof arg === 'string';
-}
-exports.isString = isString;
-
-function isSymbol(arg) {
-  return typeof arg === 'symbol';
-}
-exports.isSymbol = isSymbol;
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-exports.isUndefined = isUndefined;
-
-function isRegExp(re) {
-  return isObject(re) && objectToString(re) === '[object RegExp]';
-}
-exports.isRegExp = isRegExp;
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-exports.isObject = isObject;
-
-function isDate(d) {
-  return isObject(d) && objectToString(d) === '[object Date]';
-}
-exports.isDate = isDate;
-
-function isError(e) {
-  return isObject(e) &&
-      (objectToString(e) === '[object Error]' || e instanceof Error);
-}
-exports.isError = isError;
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-exports.isFunction = isFunction;
-
-function isPrimitive(arg) {
-  return arg === null ||
-         typeof arg === 'boolean' ||
-         typeof arg === 'number' ||
-         typeof arg === 'string' ||
-         typeof arg === 'symbol' ||  // ES6 symbol
-         typeof arg === 'undefined';
-}
-exports.isPrimitive = isPrimitive;
-
-exports.isBuffer = __webpack_require__(17);
-
-function objectToString(o) {
-  return Object.prototype.toString.call(o);
-}
-
-
-function pad(n) {
-  return n < 10 ? '0' + n.toString(10) : n.toString(10);
-}
-
-
-var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
-              'Oct', 'Nov', 'Dec'];
-
-// 26 Feb 16:19:34
-function timestamp() {
-  var d = new Date();
-  var time = [pad(d.getHours()),
-              pad(d.getMinutes()),
-              pad(d.getSeconds())].join(':');
-  return [d.getDate(), months[d.getMonth()], time].join(' ');
-}
-
-
-// log is just a thin wrapper to console.log that prepends a timestamp
-exports.log = function() {
-  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
-};
-
-
-/**
- * Inherit the prototype methods from one constructor into another.
- *
- * The Function.prototype.inherits from lang.js rewritten as a standalone
- * function (not on Function.prototype). NOTE: If this file is to be loaded
- * during bootstrapping this function needs to be rewritten using some native
- * functions as prototype setup using normal JavaScript does not work as
- * expected during bootstrapping (see mirror.js in r114903).
- *
- * @param {function} ctor Constructor function which needs to inherit the
- *     prototype.
- * @param {function} superCtor Constructor function to inherit prototype from.
- */
-exports.inherits = __webpack_require__(16);
-
-exports._extend = function(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || !isObject(add)) return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-};
-
-function hasOwnProperty(obj, prop) {
-  return Object.prototype.hasOwnProperty.call(obj, prop);
-}
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(0)))
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(6);
+module.exports = __webpack_require__(4);
 
 
 /***/ }

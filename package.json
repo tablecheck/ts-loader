@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack --config webpack-production.config.js",
     "lint": "eslint lib --ext .js",
-    "start": "webpack-dev-server --inline --progress --colors --host 0.0.0.0"
+    "start": "webpack-dev-server --inline --progress --colors"
   },
   "dependencies": {
     "lz-string": "^1.4.4",
