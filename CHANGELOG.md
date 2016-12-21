@@ -1,3 +1,18 @@
+v2.1.0 - 2016-12-21
+- Remove assert for size control
+- Add cordova-promise-fs
+- Unify loader start between browser and cordova
+- Create loader-error div instead of relying on index.html
+- Configure statusBarBackgroundColor at runtime
+- Cleanup loader after loaded
+- Do not show error messages if loaded
+- Extract public path from fs
+- Change file not found error code
+- Download all files from manifest
+- Set public path on all javascript nodes
+- Do not skip map files in domnodes
+- Log all errors while loading
+
 v2.0.0 - 2016-12-07
 - New logo layout
 - Use q for promises

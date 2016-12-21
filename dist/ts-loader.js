@@ -2857,10 +2857,6 @@ function createNode(fileCache, nodeInfo, config) {
     return createRemoteStyleSheetNode(nodeInfo);
   }
 
-  if (type === 'map') {
-    return;
-  }
-
   throw new Error('Unknown node type: ' + type);
 }
 
@@ -2948,6 +2944,11 @@ module.exports = loader;
 var loader = __webpack_require__(3);
 var customSplash = __webpack_require__(2);
 
+var isCordova = typeof window !== 'undefined' && typeof window.cordova !== 'undefined';
+var deviceReady = !isCordova;
+var loaded = false;
+var loading = false;
+
 function detectNavigatorLocale() {
   var language = window.navigator.language;
 
@@ -2981,6 +2982,10 @@ function getDiv(id) {
 }
 
 function showErrorMessage(message) {
+  if (loaded) {
+    return;
+  }
+
   var loaderError = getDiv('loader-error');
 
   loaderError.innerHTML = 'Error: ' + message;
@@ -2996,10 +3001,6 @@ function getConfig() {
   var currentlyLoadedScript = scriptNodes[scriptNodes.length - 1];
   return currentlyLoadedScript.dataset;
 }
-
-var isCordova = typeof window !== 'undefined' && typeof window.cordova !== 'undefined';
-var deviceReady = !isCordova;
-var loading = false;
 
 function startLoading(event) {
   if (event.type === 'deviceready') {
@@ -3058,6 +3059,11 @@ function startLoading(event) {
     window.setTimeout(function () {
       customSplash.hide();
     }, 200);
+
+    loader.removeAllListeners();
+    loader = null;
+
+    loaded = true;
   });
 
   loader.on('error', showErrorMessage);
@@ -3076,7 +3082,10 @@ function startLoading(event) {
 
 document.addEventListener('deviceready', startLoading, false);
 document.addEventListener('DOMContentLoaded', startLoading, false);
-document.addEventListener('error', showErrorMessage, false);
+
+window.onerror = function (message) {
+  showErrorMessage(message);
+}
 
 customSplash.create();
 
