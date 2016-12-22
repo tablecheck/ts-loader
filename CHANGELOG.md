@@ -1,3 +1,8 @@
+v2.2.0 - 2016-12-22
+- Remove annoying webpack performance warnings
+- Update spark-md5 to 3.0.0
+- Update throat to 3.0.0
+
 v2.1.0 - 2016-12-21
 - Remove assert for size control
 - Add cordova-promise-fs
