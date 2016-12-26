@@ -2503,7 +2503,7 @@ function localFile(path) {
       return;
     }
 
-    var md5 = localHashes[path] || null;
+    var md5 = localHashes[path];
 
     var file = {
       content: content,
@@ -2533,11 +2533,10 @@ function remoteFile(path, config) {
       fileBuffer: xhr.response,
       manifestEntry: {
         path: path
-      },
-      md5: null
+      }
     };
 
-    if (!config.performMD5) {
+    if (!config.performHash) {
       return file;
     }
 
@@ -2684,7 +2683,7 @@ function downloadFile(config, manifestEntry) {
     fileBuffer = xhr.response;
     contentType = xhr.contentType;
 
-    if (!config.performMD5) {
+    if (!config.performHash) {
       return manifestEntry.hash;
     }
 
