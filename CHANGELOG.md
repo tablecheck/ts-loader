@@ -1,3 +1,6 @@
+v2.3.0 - 2016-12-26
+- Use cached version of app-manifest if we cannot load a new one
+
 v2.2.0 - 2016-12-22
 - Remove annoying webpack performance warnings
 - Update spark-md5 to 3.0.0
