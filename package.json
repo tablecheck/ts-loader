@@ -1,6 +1,6 @@
 {
   "name": "ts-loader",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "main": "lib/index.js",
   "repository": "https://github.com/kkvesper/ts-loader",

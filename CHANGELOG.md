@@ -1,3 +1,7 @@
+v2.4.0 - 2017-01-06
+- appPreferences plugin promise usage does not support Android 4
+- Fallback to localStorage for appHost config if no plugin support
+
 v2.3.0 - 2016-12-26
 - Use cached version of app-manifest if we cannot load a new one
 - Rename performMD5 to performHash
