@@ -68,7 +68,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, setImmediate) {// vim:ts=4:sts=4:sw=4:
 /*!
@@ -2121,9 +2121,9 @@ return Q;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(15).setImmediate))
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 // shim for using process in browser
 var process = module.exports = {};
@@ -2307,9 +2307,9 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 var icon, iconContainer, loaderBox, logo, overlap, splash, text; // dom elements
 var timeout;
@@ -2412,9 +2412,9 @@ module.exports = {
 };
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 var EventEmitter = __webpack_require__(9).EventEmitter;
 var all = __webpack_require__(0).all;
@@ -2477,8 +2477,10 @@ function updateLocalHash(file) {
 function moreConfig() {
   function cordovaAppHost() {
     return new Promise(function (resolve, reject) {
-      if (typeof window.plugins === 'undefined') {
-        return resolve(window.localStorage.getItem('appHost'));
+      var appHost = window.localStorage.getItem('appHost');
+
+      if (appHost || typeof window.plugins === 'undefined') {
+        return resolve(appHost);
       }
 
       return window.plugins.appPreferences.fetch(resolve, reject, 'appHost');
@@ -2984,9 +2986,9 @@ loader.load = function (runtimeConfig) {
 module.exports = loader;
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 var loader = __webpack_require__(3);
 var customSplash = __webpack_require__(2);
@@ -3137,9 +3139,9 @@ window.onerror = function (message) {
 customSplash.create();
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 /**
  * Static Private functions
@@ -3745,9 +3747,9 @@ module.exports = function(options){
 };
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 var Promise = __webpack_require__(0).Promise;
 var LZString = __webpack_require__(10);
@@ -3849,9 +3851,9 @@ module.exports = {
 };
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 function objectAssign() {
   function clobber(t, s) {
@@ -3875,9 +3877,9 @@ function objectAssign() {
 module.exports = objectAssign;
 
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 var Promise = __webpack_require__(0).Promise;
 
@@ -3921,9 +3923,9 @@ function xhrPromise(url, responseType) {
 module.exports = xhrPromise;
 
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -4229,9 +4231,9 @@ function isUndefined(arg) {
 }
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;// Copyright (c) 2013 Pieroxy <pieroxy@pieroxy.net>
 // This work is free. You can redistribute it and/or modify it
@@ -4730,15 +4732,16 @@ var LZString = {
 })();
 
 if (true) {
-  !(__WEBPACK_AMD_DEFINE_RESULT__ = function () { return LZString; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  !(__WEBPACK_AMD_DEFINE_RESULT__ = function () { return LZString; }.call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 } else if( typeof module !== 'undefined' && module != null ) {
   module.exports = LZString
 }
 
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {exports = module.exports = SemVer;
 
@@ -5946,9 +5949,9 @@ function prerelease(version, loose) {
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
     "use strict";
@@ -6139,9 +6142,9 @@ function prerelease(version, loose) {
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(1)))
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 (function (factory) {
     if (true) {
@@ -6896,12 +6899,12 @@ function prerelease(version, loose) {
 }));
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-'use strict'
+
 
 module.exports = function (PromiseArgument) {
   var Promise;
@@ -6993,9 +6996,9 @@ function Delayed(resolve, fn, self, args) {
 }
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 var apply = Function.prototype.apply;
 
@@ -7052,14 +7055,16 @@ exports.setImmediate = setImmediate;
 exports.clearImmediate = clearImmediate;
 
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 var g;
 
 // This works in non-strict mode
-g = (function() { return this; })();
+g = (function() {
+	return this;
+})();
 
 try {
 	// This works if eval is allowed (see CSP)
@@ -7077,12 +7082,12 @@ try {
 module.exports = g;
 
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(4);
 
 
-/***/ }
+/***/ })
 /******/ ]);

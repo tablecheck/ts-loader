@@ -1,6 +1,6 @@
 {
   "name": "ts-loader",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "private": true,
   "main": "lib/index.js",
   "repository": "https://github.com/kkvesper/ts-loader",
@@ -17,11 +17,11 @@
     "throat": "^3.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^7.0.0",
-    "eslint": "^3.7.1",
+    "babel-eslint": "^7.1.1",
+    "eslint": "^3.13.1",
     "ip": "^1.1.4",
-    "webpack": "^2.1.0-beta.28",
-    "webpack-dev-middleware": "^1.8.4",
-    "webpack-dev-server": "^2.1.0-beta.12"
+    "webpack": "^2.2.0-rc.4",
+    "webpack-dev-middleware": "^1.9.0",
+    "webpack-dev-server": "^2.2.0-rc.0"
   }
 }
