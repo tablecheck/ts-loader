@@ -1,6 +1,6 @@
 {
   "name": "ts-loader",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "private": true,
   "main": "dist/ts-loader.js",
   "repository": "https://github.com/kkvesper/ts-loader",

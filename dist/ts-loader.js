@@ -1336,12 +1336,13 @@ module.exports = function (options) {
     method = method || 'readAsText';
     return file(path).then(function (fileEntry) {
       return new Promise(function (resolve, reject) {
-        fileEntry.file(function (file) {
+        fileEntry.file(function (fileObject) {
           var reader = new FileReader();
-          reader.onloadend = function () {
-            resolve(this.result);
+          reader.onload = function (evt) {
+            resolve(evt.target.result);
           };
-          reader[method](file);
+          reader.onerror = reject;
+          reader[method](fileObject);
         }, reject);
       });
     });
@@ -1358,9 +1359,7 @@ module.exports = function (options) {
 
   /* write contents to a file */
   function write(path, blob, mimeType) {
-    return ensure(dirname(path)).then(function () {
-      return file(path, { create: true });
-    }).then(function (fileEntry) {
+    return create(path).then(function (fileEntry) {
       return new Promise(function (resolve, reject) {
         fileEntry.createWriter(function (writer) {
           writer.onwriteend = resolve;
@@ -2318,15 +2317,16 @@ function loadFilesFromCache(manifest, fileCache, files) {
   });
 
   return Promise.all(filesToLoad.map(function (file) {
-    return fs.read(file.path).then(function (content) {
-      fileCache[file.path] = { manifestEntry: file, content: content };
+    return fs.read(file.path, 'readAsArrayBuffer').then(function (fileBuffer) {
+      fileCache[file.path] = { manifestEntry: file, fileBuffer: fileBuffer };
     }).catch(function (error) {
       console.error(error);
+      throw error;
     });
   }));
 }
 
-loader.FunsupportedBrowserLoad = function (config) {
+loader.unsupportedBrowserLoad = function (config) {
   var manifest = void 0;
   var url = (config.appHost || '') + '/' + config.manifestFile;
 

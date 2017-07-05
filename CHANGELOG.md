@@ -1,5 +1,8 @@
 # ts-loader CHANGELOG
 
+## v2.8.2 - 2017-07-05
+- Read local files as buffer to avoid encoding issue
+
 ## v2.8.1 - 2017-05-29
 - Removed babel-polyfill in favor of a more specific polyfill for Promise
 
