@@ -1,3 +1,13 @@
+<a name="3.1.2"></a>
+## [3.1.2](https://github.com/kkvesper/ts-loader/compare/3.1.1...3.1.2) (2018-09-14)
+
+
+### Bug Fixes
+
+* **cordovaLoad:** use webview caching for styles ([53bf227](https://github.com/kkvesper/ts-loader/commit/53bf227))
+
+
+
 <a name="3.1.1"></a>
 ## [3.1.1](https://github.com/kkvesper/ts-loader/compare/3.1.0...3.1.1) (2018-03-05)
 
