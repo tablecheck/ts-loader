@@ -1,3 +1,13 @@
+<a name="3.1.3"></a>
+## [3.1.3](https://github.com/kkvesper/ts-loader/compare/3.1.2...3.1.3) (2018-09-18)
+
+
+### Bug Fixes
+
+* release script ([e451b9d](https://github.com/kkvesper/ts-loader/commit/e451b9d))
+
+
+
 <a name="3.1.2"></a>
 ## [3.1.2](https://github.com/kkvesper/ts-loader/compare/3.1.1...3.1.2) (2018-09-14)
 

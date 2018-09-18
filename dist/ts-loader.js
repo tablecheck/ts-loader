@@ -1472,7 +1472,7 @@ function cordovaLoad(serverRoot, forceReload, manifest, onProgress) {
   var files = Object.keys(manifest.files).map(function (fileName) {
     return manifest.files[fileName];
   }).filter(function (file) {
-    return file;
+    return file && file.type !== 'css';
   }).map(function (_ref) {
     var path = _ref.path;
     return path;
@@ -1505,8 +1505,14 @@ function cordovaLoad(serverRoot, forceReload, manifest, onProgress) {
     return Promise.resolve();
   }).then(function () {
     return Promise.all(manifest.domNodes.map(throat(1, function (nodeInfo) {
-      var cachePath = cache.get(nodeInfo.path);
-      nodeInfo.path = cachePath.replace(/^file:\/\//, '');
+      if (nodeInfo.type === 'css') {
+        if (!nodeInfo.path.match(/^http(s|):\/\//)) {
+          nodeInfo.path = '' + serverRoot + nodeInfo.path;
+        }
+      } else {
+        var cachePath = cache.get(nodeInfo.path);
+        nodeInfo.path = cachePath.replace(/^file:\/\//, '');
+      }
       return new _DomNode2.default(nodeInfo);
     })));
   });
