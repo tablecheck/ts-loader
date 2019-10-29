@@ -1,3 +1,13 @@
+<a name="3.1.4"></a>
+## [3.1.4](https://github.com/kkvesper/ts-loader/compare/3.1.3...3.1.4) (2019-10-29)
+
+
+### Bug Fixes
+
+* **ionic-webview:** convert file url correctly ([2108266](https://github.com/kkvesper/ts-loader/commit/2108266))
+
+
+
 <a name="3.1.3"></a>
 ## [3.1.3](https://github.com/kkvesper/ts-loader/compare/3.1.2...3.1.3) (2018-09-18)
 

@@ -1487,7 +1487,7 @@ function cordovaLoad(serverRoot, forceReload, manifest, onProgress) {
   });
   window.cordovaFileCache = {
     get: function get(path) {
-      return cache.get(path).replace(/^file:\/\//, '');
+      return window.Ionic.WebView.convertFileSrc(cache.get(path));
     }
   };
 
@@ -1507,11 +1507,11 @@ function cordovaLoad(serverRoot, forceReload, manifest, onProgress) {
     return Promise.all(manifest.domNodes.map(throat(1, function (nodeInfo) {
       if (nodeInfo.type === 'css') {
         if (!nodeInfo.path.match(/^http(s|):\/\//)) {
-          nodeInfo.path = '' + serverRoot + nodeInfo.path;
+          nodeInfo.path = window.Ionic.WebView.convertFileSrc('' + serverRoot + nodeInfo.path);
         }
       } else {
         var cachePath = cache.get(nodeInfo.path);
-        nodeInfo.path = cachePath.replace(/^file:\/\//, '');
+        nodeInfo.path = window.Ionic.WebView.convertFileSrc(cachePath);
       }
       return new _DomNode2.default(nodeInfo);
     })));
