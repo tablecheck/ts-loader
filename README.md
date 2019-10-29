@@ -7,6 +7,7 @@ If using in an Cordova App, the following plugins are required:
 
 - `cordova-plugin-file`
 - `cordova-plugin-file-transfer`
+- `cordova-plugin-ionic-webview@2.3.2`
 
 ## Quick Start
 
