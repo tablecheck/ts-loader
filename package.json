@@ -3,12 +3,12 @@
   "version": "3.1.4",
   "private": true,
   "main": "dist/ts-loader.js",
-  "repository": "https://github.com/kkvesper/ts-loader",
+  "repository": "https://github.com/tablecheck/ts-loader",
   "scripts": {
     "build": "webpack --config webpack-production.config.js",
     "lint": "eslint lib --ext .js",
     "start": "webpack-dev-server --inline --progress --colors",
-    "tags:update": "git fetch --prune git@github.com:kkvesper/ts-loader.git '+refs/tags/*:refs/tags/*'",
+    "tags:update": "git fetch --prune git@github.com:tablecheck/ts-loader.git '+refs/tags/*:refs/tags/*'",
     "version": "npm run build && git add dist/* && npm run tags:update && conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "pre-commit": {
