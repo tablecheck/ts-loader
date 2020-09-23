@@ -1,3 +1,13 @@
+<a name="3.1.5"></a>
+## [3.1.5](https://github.com/tablecheck/ts-loader/compare/3.1.4...3.1.5) (2020-09-23)
+
+
+### Bug Fixes
+
+* ensure Loader always returns an emitter ([57bd3ef](https://github.com/tablecheck/ts-loader/commit/57bd3ef))
+
+
+
 <a name="3.1.4"></a>
 ## [3.1.4](https://github.com/kkvesper/ts-loader/compare/3.1.3...3.1.4) (2019-10-29)
 
