@@ -1,21 +1,18 @@
 const ip = require('ip');
 const path = require('path');
-const webpack = require('webpack');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const host = ip.address();
 const port = 8080;
 
 module.exports = {
+  mode: 'development',
   entry: {
     'ts-loader': [
       `webpack-dev-server/client?http://${host}:${port}`,
-      'core-js/fn/promise',
       './lib/index.js'
     ],
-    'ts-loader.min': [
-      'core-js/fn/promise',
-      './lib/index.js'
-    ]
+    'ts-loader.min': ['./lib/index.js']
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -24,19 +21,17 @@ module.exports = {
   performance: {
     hints: false
   },
-  plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      include: /\.min\.js$/,
-      minimize: true
-    })
-  ],
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({ include: /\.min\.js$/ })]
+  },
   module: {
     rules: [
       {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /(node_modules|bower_components)/,
-        query: {
+        options: {
           cacheDirectory: true
         }
       }
