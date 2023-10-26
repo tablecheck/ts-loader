@@ -1,4 +1,4 @@
-parser: babel-eslint
+parser: "@babel/eslint-parser"
 extends: airbnb-base
 env:
   browser : true
@@ -20,3 +20,4 @@ rules:
 # custom rules
   import/no-extraneous-dependencies: 0
   no-console: 0
+  operator-linebreak: 0
