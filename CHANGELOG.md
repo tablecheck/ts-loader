@@ -1,3 +1,17 @@
+# [4.0.0](https://github.com/tablecheck/ts-loader/compare/3.1.5...4.0.0) (2023-10-27)
+
+
+### Bug Fixes
+
+* remove cordova file cache ([73456fc](https://github.com/tablecheck/ts-loader/commit/73456fc6a3445891ad2e0e24f7b541f555df01e6))
+
+
+### BREAKING CHANGES
+
+* removed the `useLocalCache` functionality
+
+
+
 <a name="3.1.5"></a>
 ## [3.1.5](https://github.com/tablecheck/ts-loader/compare/3.1.4...3.1.5) (2020-09-23)
 
