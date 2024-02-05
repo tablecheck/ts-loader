@@ -4744,26 +4744,37 @@ var Loader = /*#__PURE__*/Loader_createClass(function Loader(runtimeConfig) {
       queueSize = _ref.queueSize;
     _this.emitter.emit('progress', queueIndex, queueSize);
   });
-  Loader_defineProperty(this, "load", function () {
-    return _this.getAppManifest().then(function (manifest) {
-      var completedCount = 0;
-      var publicPath = _this.config.publicPath;
-      var domNodes = manifest.domNodes;
-      var queueSize = domNodes.length;
-      var promises = domNodes.map(function (nodeInfo) {
-        if (!nodeInfo.path.match(/^http(s|):\/\//)) {
-          nodeInfo.path = "".concat(publicPath).concat(nodeInfo.path);
-        }
-        var domNode = new DomNode(nodeInfo);
-        return domNode.createRemoteNode().then(function () {
+  Loader_defineProperty(this, "loadDomNode", function (nodeInfo) {
+    var publicPath = _this.config.publicPath;
+    if (!nodeInfo.path.match(/^http(s|):\/\//)) {
+      nodeInfo.path = "".concat(publicPath).concat(nodeInfo.path);
+    }
+    var domNode = new DomNode(nodeInfo);
+    return domNode.createRemoteNode();
+  });
+  Loader_defineProperty(this, "loadDomNodes", function (domNodes) {
+    var completedCount = 0;
+    var queueSize = domNodes.length;
+    return domNodes.reduce(function (chain, nodeInfo) {
+      return chain.then(function () {
+        return _this.loadDomNode(nodeInfo).then(function () {
           completedCount += 1;
           _this.onProgress({
             queueIndex: completedCount,
             queueSize: queueSize
           });
         });
+      })["catch"](function (error) {
+        if (!nodeInfo.optional) {
+          throw error;
+        }
       });
-      return Promise.all(promises);
+    }, Promise.resolve());
+  });
+  Loader_defineProperty(this, "load", function () {
+    return _this.getAppManifest().then(function (manifest) {
+      var domNodes = manifest.domNodes;
+      return _this.loadDomNodes(domNodes);
     });
   });
   Loader_defineProperty(this, "validateAppManifest", function (manifest) {
@@ -4961,9 +4972,7 @@ function getErrorLoaderDiv() {
       api.hide();
       // It's in a callback so it will be defined when it's called
       // eslint-disable-next-line no-use-before-define
-      startLoading({
-        forceReload: true
-      });
+      startLoading();
     };
     loaderError.appendChild(loaderMessage);
     loaderError.appendChild(reloadButton);
@@ -5018,7 +5027,7 @@ function startLoading(event) {
     return;
   }
   loading = true;
-  var loader = new Loader(config, event.forceReload).emitter;
+  var loader = new Loader(config).emitter;
   if (typeof window !== 'undefined' && typeof window.StatusBar !== 'undefined') {
     var statusBarBackgroundColor = config.statusBarBackgroundColor || '#282828';
     window.StatusBar.backgroundColorByHexString(statusBarBackgroundColor);
@@ -5063,11 +5072,6 @@ function startLoading(event) {
     custom_splash.setProgress("".concat(progress, "%"));
   });
 }
-window.forcedLoad = function () {
-  return startLoading({
-    forceReload: true
-  });
-};
 function firstLoad(event) {
   config = getConfig();
   startLoading(event);

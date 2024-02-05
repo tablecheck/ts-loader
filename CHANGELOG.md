@@ -1,3 +1,12 @@
+## [4.0.1](https://github.com/tablecheck/ts-loader/compare/4.0.0...4.0.1) (2024-02-05)
+
+
+### Bug Fixes
+
+* fix dom node load ([b033b38](https://github.com/tablecheck/ts-loader/commit/b033b384b6691138e8aaa30f746341fae454d788))
+
+
+
 # [4.0.0](https://github.com/tablecheck/ts-loader/compare/3.1.5...4.0.0) (2023-10-27)
 
 
