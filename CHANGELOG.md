@@ -1,3 +1,12 @@
+## [4.0.2](https://github.com/tablecheck/ts-loader/compare/4.0.1...4.0.2) (2024-02-08)
+
+
+### Bug Fixes
+
+* Fix startLoading default ([34e0279](https://github.com/tablecheck/ts-loader/commit/34e0279df348f6e11426a0fdc675f1018172681e))
+
+
+
 ## [4.0.1](https://github.com/tablecheck/ts-loader/compare/4.0.0...4.0.1) (2024-02-05)
 
 

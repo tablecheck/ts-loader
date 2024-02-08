@@ -5015,7 +5015,8 @@ function getConfig() {
     return values;
   }, {});
 }
-function startLoading(event) {
+function startLoading() {
+  var event = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   if (event.type === 'deviceready') {
     deviceReady = true;
   }
