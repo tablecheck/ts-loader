@@ -1,3 +1,12 @@
+## [4.0.3](https://github.com/tablecheck/ts-loader/compare/4.0.2...4.0.3) (2024-07-02)
+
+
+### Bug Fixes
+
+* add support for loading es module ([41a4359](https://github.com/tablecheck/ts-loader/commit/41a4359fd02775a53fc0778e6553e30712da91af))
+
+
+
 ## [4.0.2](https://github.com/tablecheck/ts-loader/compare/4.0.1...4.0.2) (2024-02-08)
 
 

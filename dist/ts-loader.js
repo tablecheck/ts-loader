@@ -4625,11 +4625,14 @@ var DomNode = /*#__PURE__*/_createClass(function DomNode(nodeInfo) {
   var _this = this;
   _classCallCheck(this, DomNode);
   _defineProperty(this, "getNodeAttributes", function () {
-    var type = _this.nodeInfo.type;
+    var _this$nodeInfo = _this.nodeInfo,
+      type = _this$nodeInfo.type,
+      _this$nodeInfo$module = _this$nodeInfo.module,
+      module = _this$nodeInfo$module === void 0 ? false : _this$nodeInfo$module;
     if (type === 'js') {
       return {
         element: 'script',
-        type: 'text/javascript'
+        type: module ? 'module' : 'text/javascript'
       };
     }
     if (type === 'css') {
